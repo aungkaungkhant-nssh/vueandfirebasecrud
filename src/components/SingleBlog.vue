@@ -1,13 +1,13 @@
 <template>
-    <div @click="showBody=!showBody" class="blog">
+    <div  class="blog">
         <div>
-            <h3>{{blog.title}}</h3>
+            <h3 @click="showBody=!showBody">{{blog.title}}</h3>
       
         </div>
         <div class="icons">
             <i class="fas fa-trash-alt"></i>
             <i class="far fa-edit"></i>
-            <i class="fas fa-check"></i>
+            <i class="fas fa-check" @click="check(blog.id)"></i>
         </div>
     </div>
      <p v-if="showBody">{{blog.body}}</p>
@@ -16,11 +16,21 @@
 
 <script>
 import { ref } from '@vue/reactivity';
+import { db } from '../firebase/config';
+import {useRouter} from 'vue-router'
 export default {
     props:["blog"],
     setup(){
+        let router=useRouter();
         let showBody=ref(false);
-        return{showBody};
+        let check=async(id)=>{
+            let res=await db.collection("blogs").doc(id).update({
+                complete:!false
+            });
+            router.push("/");
+
+        }
+        return{showBody,check};
     }
 }
 </script>
@@ -30,6 +40,7 @@ export default {
     display: flex;
     align-items: center;
     justify-content: space-between;
+   
 }
 .icons i{
     margin-left: 30px;
@@ -37,4 +48,5 @@ export default {
     font-size: 20px;
     cursor: pointer;
 }
+
 </style>
