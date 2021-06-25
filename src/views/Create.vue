@@ -19,18 +19,22 @@
 
 <script>
 import { ref } from '@vue/reactivity';
-import {db} from '../firebase/config'
+import {db,timestamp} from '../firebase/config';
+import {useRouter} from 'vue-router'
 export default {
     setup(){
+      let router=useRouter();
       let title=ref("");
       let body=ref("");
       let addBlog=async()=>{
          let newBlog={
            title:title.value,
             body:body.value,
-            complete:false
+            complete:false,
+            create_at:timestamp()
          }
          let res=await db.collection("blogs").add(newBlog);
+          router.push({name:"Home"});
       }
       return{title,body,addBlog};
     }
