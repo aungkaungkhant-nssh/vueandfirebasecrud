@@ -7,13 +7,14 @@
               </div>
           </div>
           <div v-else>
-              loading... 
+              <Loading></Loading>
           </div>
       </div>
   </div>
 </template>
 
 <script>
+import Loading from '../components/Loading'
 import SingleBlog from '../components/SingleBlog'
 import { onMounted, ref } from '@vue/runtime-core'
 import { db } from '../firebase/config'
@@ -21,7 +22,8 @@ import { db } from '../firebase/config'
 
 
 export default {
-  components: { SingleBlog },
+  components: {
+    Loading, SingleBlog },
   setup(){
     let blogs=ref([]);
     
