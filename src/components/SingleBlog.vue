@@ -24,10 +24,17 @@ export default {
         let router=useRouter();
         let showBody=ref(false);
         let check=async(id)=>{
-            let res=await db.collection("blogs").doc(id).update({
-                complete:!false
+            let complete;
+            let res=await db.collection("blogs").get();
+            res.docs.map((doc)=>{
+                if(doc.id===id){
+                  complete= !doc.data().complete;
+                }
+            })
+            await db.collection("blogs").doc(id).update({
+                complete:complete
             });
-            router.push("/");
+            // router.push("/");
 
         }
         return{showBody,check};
