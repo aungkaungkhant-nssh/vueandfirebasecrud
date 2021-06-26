@@ -5,7 +5,7 @@
       
         </div>
         <div class="icons">
-            <i class="fas fa-trash-alt"></i>
+            <i class="fas fa-trash-alt" @click="deleteBlog(blog.id)"></i>
             <i class="far fa-edit"></i>
             <i class="fas fa-check" @click="check(blog.id)"></i>
         </div>
@@ -34,10 +34,13 @@ export default {
             await db.collection("blogs").doc(id).update({
                 complete:complete
             });
-            // router.push("/");
+            
 
+        };
+        let deleteBlog=async(id)=>{
+            await db.collection("blogs").doc(id).delete();
         }
-        return{showBody,check};
+        return{showBody,check,deleteBlog};
     }
 }
 </script>
