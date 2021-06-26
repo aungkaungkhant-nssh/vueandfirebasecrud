@@ -1,6 +1,9 @@
 <template>
     <div class="container mt-5" style="width:500px">
-        <form @submit.prevent="addBlog">
+      <div v-if="error">
+        {{error}}
+      </div>
+        <form @submit.prevent="blogAdd">
             <div class="mb-3">
               <label for="" class="form-label">Title:</label>
               <input type="text" class="form-control" v-model="title">
@@ -21,22 +24,24 @@
 import { ref } from '@vue/reactivity';
 import {db,timestamp} from '../firebase/config';
 import {useRouter} from 'vue-router'
+import addBlog from "../composable/addBlog"
 export default {
     setup(){
       let router=useRouter();
+      let {error,add}=addBlog();
       let title=ref("");
       let body=ref("");
-      let addBlog=async()=>{
+      let blogAdd=async()=>{
          let newBlog={
            title:title.value,
             body:body.value,
             complete:false,
             create_at:timestamp()
          }
-         let res=await db.collection("blogs").add(newBlog);
-          router.push({name:"Home"});
+         await add(newBlog);
+         router.push({name:"Home"});
       }
-      return{title,body,addBlog};
+      return{title,body,blogAdd,error};
     }
 }
 </script>

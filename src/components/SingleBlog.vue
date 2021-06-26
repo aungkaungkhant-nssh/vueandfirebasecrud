@@ -1,15 +1,18 @@
 <template>
     <div  class="blog">
+        <div v-if="error">
+            {{error}}
+        </div>
         <div>
             <h3 @click="showBody=!showBody">{{blog.title}}</h3>
       
         </div>
         <div class="icons" v-if="blog">
-            <i class="fas fa-trash-alt" @click="deleteBlog(blog.id)"></i>
+            <i class="fas fa-trash-alt" @click="blogDelete(blog.id)"></i>
             <router-link :to="{name:'Edit',params:{id:blog.id}}">
                     <i class="far fa-edit"></i>
             </router-link>
-            <i class="fas fa-check" @click="check(blog.id)"></i>
+            <i class="fas fa-check" @click="complete(blog.id)"></i>
         </div>
     </div>
      <p v-if="showBody">{{blog.body}}</p>
@@ -20,12 +23,16 @@
 import { ref } from '@vue/reactivity';
 import { db } from '../firebase/config';
 import {useRouter} from 'vue-router'
+import updateBlogs from '../composable/updateBlogs'
+import deleteBlog from '../composable/deleteBlog'
 export default {
     props:["blog"],
     setup(){
+        let {error,update}=updateBlogs();
+        let {trash}=deleteBlog();
         let router=useRouter();
         let showBody=ref(false);
-        let check=async(id)=>{
+        let complete=async(id)=>{
             let complete;
             let res=await db.collection("blogs").get();
             res.docs.map((doc)=>{
@@ -33,16 +40,18 @@ export default {
                   complete= !doc.data().complete;
                 }
             })
-            await db.collection("blogs").doc(id).update({
+             let condition={
                 complete:complete
-            });
+            }            
+           await update(id,condition);
             
 
         };
-        let deleteBlog=async(id)=>{
-            await db.collection("blogs").doc(id).delete();
+        let blogDelete=async(id)=>{
+           await trash(id);
+            // await db.collection("blogs").doc(id).delete();
         }
-        return{showBody,check,deleteBlog};
+        return{showBody,complete,blogDelete,error};
     }
 }
 </script>

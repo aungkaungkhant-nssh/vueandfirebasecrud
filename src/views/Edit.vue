@@ -26,12 +26,14 @@
 import Loading from '../components/Loading'
 import { onMounted, ref } from '@vue/runtime-core'
 import { db } from '../firebase/config'
+import updateBlogs from "../composable/updateBlogs"
 import {useRouter} from 'vue-router'
 export default {
   components: { Loading },
     props:["id"],
     setup(props){
         let blog=ref([]);
+        let {error,update}=updateBlogs();
        let router=useRouter();
         let title=ref();
         let body=ref();
@@ -46,7 +48,7 @@ export default {
                 title:title.value,
                 body:body.value
             }
-            await db.collection("blogs").doc(props.id).update(blog);
+            await update(props.id,blog);
             router.push("/");
         }
         return {blog,title,body,editBlog}

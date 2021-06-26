@@ -1,6 +1,9 @@
 <template>
   <div class="home">
       <div class="container w-50 mt-5">
+          <div v-if="error">
+              {{error}}
+          </div>
           <div v-if="blogs.length>0">
               <div v-for="blog in blogs" :key="blog.id" class="blogs"   :class="{complete:blog.complete===true}">
                   <SingleBlog :blog="blog"></SingleBlog>
@@ -17,7 +20,7 @@
 import Loading from '../components/Loading'
 import SingleBlog from '../components/SingleBlog'
 import { onMounted, ref } from '@vue/runtime-core'
-import { db } from '../firebase/config'
+import getBlogs from '../composable/getBlogs'
 // @ is an alias to /src
 
 
@@ -25,17 +28,11 @@ export default {
   components: {
     Loading, SingleBlog },
   setup(){
-    let blogs=ref([]);
-    
+    let {error,load,blogs}=getBlogs();
     onMounted(async()=>{
-      await db.collection("blogs").orderBy('create_at').onSnapshot((snap)=>{
-          blogs.value=snap.docs.map((doc)=>{
-              return {id:doc.id,...doc.data()}
-          })    
-      });
-     
+      await load();
     })
-    return {blogs}
+    return {blogs,error}
   }
 }
 </script>
