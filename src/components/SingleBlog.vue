@@ -4,9 +4,11 @@
             <h3 @click="showBody=!showBody">{{blog.title}}</h3>
       
         </div>
-        <div class="icons">
+        <div class="icons" v-if="blog">
             <i class="fas fa-trash-alt" @click="deleteBlog(blog.id)"></i>
-            <i class="far fa-edit"></i>
+            <router-link :to="{name:'Edit',params:{id:blog.id}}">
+                    <i class="far fa-edit"></i>
+            </router-link>
             <i class="fas fa-check" @click="check(blog.id)"></i>
         </div>
     </div>

@@ -33,6 +33,7 @@ export default {
               return {id:doc.id,...doc.data()}
           })    
       });
+     
     })
     return {blogs}
   }
